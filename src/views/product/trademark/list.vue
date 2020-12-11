@@ -39,6 +39,18 @@
         </el-button>
       </el-table-column>
     </el-table>
+    <!-- 分页器 -->
+    <el-pagination
+      class="trademarl-pagination"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="1"
+      :page-sizes="[3, 5, 15, 20]"
+      :page-size="100"
+      layout=" prev, pager, next, jumper,sizes, total"
+      :total="400"
+    >
+    </el-pagination>
   </div>
 </template>
 
@@ -61,6 +73,14 @@ export default {
     }
     console.log(res);
   },
+  methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    },
+  },
 };
 </script>
 
@@ -70,4 +90,8 @@ export default {
 .trademarl-image
   width: 100px
   height: 60px
+.trademarl-pagination
+  text-align: right
+.el-pagination__sizes
+  margin-left: 250px
 </style>
