@@ -4,9 +4,9 @@ const api_name = "/admin/product/baseTrademark";
 
 export default {
   /* 获取所有商品列表 */
-  getPageList() {
+  getPageList(page, limit) {
     return request({
-      url: `${api_name}/getTrademarkList`,
+      url: `${api_name}/${page}/${limit}`,
       method: "GET"
     });
   },
@@ -30,13 +30,6 @@ export default {
     return request({
       url: `${api_name}/update`,
       method: "PUT"
-    });
-  },
-  /* 获取所有商品列表 */
-  getPageList() {
-    return request({
-      url: `${api_name}/getTrademarkList`,
-      method: "GET"
     });
   }
 };
