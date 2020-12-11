@@ -44,11 +44,11 @@
       class="trademarl-pagination"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="1"
+      :current-page="showList.current"
       :page-sizes="[3, 5, 15, 20]"
-      :page-size="100"
+      :page-size="showList.size"
       layout=" prev, pager, next, jumper,sizes, total"
-      :total="400"
+      :total="showList.total"
     >
     </el-pagination>
   </div>
@@ -59,26 +59,44 @@ export default {
   name: "TrademarkList",
   data() {
     return {
+      // 表格数据
       trademarkTableData: [],
+      // 展示数据
+      showList: {
+        total: 1, // 总数
+        size: 3, // 每页数量
+        current: 1, // 当前页数
+      },
     };
   },
-  async mounted() {
-    const res = await this.$API.trademark.getPageList(1, 3);
-    if (res.code === 200) {
-      this.$message.success("数据加载成功");
-      // 数据复制给data
-      this.trademarkTableData = res.data.records;
-    } else {
-      this.$message.error("数据加载失败");
-    }
-    console.log(res);
+  mounted() {
+    this.getPageList(this.showList.current, this.showList.size);
   },
   methods: {
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+    /* 获取表格数据,公用函数 */
+    async getPageList(page, limit) {
+      const res = await this.$API.trademark.getPageList(page, limit);
+      if (res.code === 200) {
+        this.$message.success("数据加载成功");
+        // 数据复制给data
+        this.trademarkTableData = res.data.records;
+        // 总数
+        this.showList.total = res.data.total;
+        // 每页数量
+        this.showList.size = res.data.size;
+        // 当前页数
+        this.showList.current = res.data.current;
+      } else {
+        this.$message.error("数据加载失败");
+      }
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+    handleSizeChange(size) {
+      this.showList.size = size;
+      this.getPageList(this.showList.current, size);
+    },
+    handleCurrentChange(current) {
+      this.showList.current = current;
+      this.getPageList(current, this.showList.size);
     },
   },
 };
