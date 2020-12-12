@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 添加按钮 -->
-    <el-button type="primary">
+    <el-button type="primary" @click="dialogFormVisible = true">
       <i class="el-icon-plus"></i>
       添加
     </el-button>
@@ -51,6 +51,41 @@
       :total="showList.total"
     >
     </el-pagination>
+    <!-- 提交Dialog -->
+    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+      <el-form :model="trademarkForm" label-width="100px">
+        <!-- 品牌名称 -->
+        <el-form-item label="品牌名称">
+          <el-input
+            v-model="trademarkForm.tmName"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <!-- 品牌LOGO -->
+        <el-form-item label="品牌LOGO">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img
+              v-if="trademarkForm.logoUrl"
+              :src="trademarkForm.logoUrl"
+              class="avatar"
+            />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button>取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -66,6 +101,12 @@ export default {
         total: 1, // 总数
         size: 3, // 每页数量
         current: 1, // 当前页数
+      },
+      dialogFormVisible: false, //对话框显示隐藏
+      /* 收集数据 */
+      trademarkForm: {
+        tmName: "",
+        logoUrl: "",
       },
     };
   },
@@ -90,6 +131,7 @@ export default {
         this.$message.error("数据加载失败");
       }
     },
+    /* 分页器相关 */
     handleSizeChange(size) {
       this.showList.size = size;
       this.getPageList(this.showList.current, size);
@@ -97,6 +139,23 @@ export default {
     handleCurrentChange(current) {
       this.showList.current = current;
       this.getPageList(current, this.showList.size);
+    },
+    /* 上传图片 */
+    handleAvatarSuccess(res) {
+      console.log(res);
+      // this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     },
   },
 };
@@ -112,4 +171,27 @@ export default {
   text-align: right
 .el-pagination__sizes
   margin-left: 250px
+.avatar-uploader .el-upload
+  border: 1px dashed #d9d9d9
+  border-radius: 6px
+  cursor: pointer
+  position: relative
+  overflow: hidden
+
+  :hover
+  &
+    border-color: #409EFF
+
+.avatar-uploader-icon
+  font-size: 28px
+  color: #8c939d
+  width: 178px
+  height: 178px
+  line-height: 178px
+  text-align: center
+
+.avatar
+  width: 178px
+  height: 178px
+  display: block
 </style>
