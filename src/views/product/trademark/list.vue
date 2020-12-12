@@ -53,9 +53,9 @@
     </el-pagination>
     <!-- 提交Dialog -->
     <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
-      <el-form :model="trademarkForm" label-width="100px">
+      <el-form :model="trademarkForm" label-width="100px" :rules="rules">
         <!-- 品牌名称 -->
-        <el-form-item label="品牌名称">
+        <el-form-item label="品牌名称" prop="tmName">
           <el-input
             v-model="trademarkForm.tmName"
             autocomplete="off"
@@ -107,6 +107,10 @@ export default {
       trademarkForm: {
         tmName: "",
         logoUrl: "",
+      },
+      /* 效验 */
+      rules: {
+        tmName: [{ required: true, message: "客官,留下姓名", trigger: "blur" }],
       },
     };
   },
