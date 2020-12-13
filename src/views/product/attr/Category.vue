@@ -3,21 +3,46 @@
   <el-card class="box-card">
     <el-form :inline="true" :model="category" class="demo-form-inline">
       <el-form-item label="一级分类">
-        <el-select v-model="category1Id" placeholder="请选择">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+        <el-select
+          v-model="category.category1Id"
+          placeholder="请选择"
+          @change="category1Click"
+        >
+          <el-option
+            :label="c1.name"
+            :value="c1.id"
+            v-for="c1 in category1DataList"
+            :key="c1.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="二级分类">
-        <el-select v-model="category2Id" placeholder="请选择">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+        <el-select
+          v-model="category.category2Id"
+          placeholder="请选择"
+          @change="category2Click"
+        >
+          <el-option
+            :label="c2.name"
+            :value="c2.id"
+            v-for="c2 in category2DataList"
+            :key="c2.id"
+          ></el-option>
         </el-select>
       </el-form-item>
+
       <el-form-item label="三级分类">
-        <el-select v-model="category3Id" placeholder="请选择">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+        <el-select
+          v-model="category.category3Id"
+          placeholder="请选择"
+          @change="category3Click"
+        >
+          <el-option
+            :label="c3.name"
+            :value="c3.id"
+            v-for="c3 in category3DataList"
+            :key="c3.id"
+          ></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -34,7 +59,42 @@ export default {
         category2Id: "",
         category3Id: "",
       },
+      category1DataList: [],
+      category2DataList: [],
+      category3DataList: [],
     };
+  },
+  methods: {
+    async category1Click(e) {
+      const res = await this.$API.attr.getCategory2Data(e);
+      if (res.ok) {
+        this.$message.success("二级目录数据获取成功");
+        this.category2DataList = res.data;
+      } else {
+        this.$message.success("二级目录数据获取失败");
+      }
+    },
+    async category2Click(e) {
+      const res = await this.$API.attr.getCategory3Data(e);
+      if (res.ok) {
+        this.$message.success("二级目录数据获取成功");
+        this.category3DataList = res.data;
+      } else {
+        this.$message.success("二级目录数据获取失败");
+      }
+    },
+    async category3Click(e) {
+      console.log(e);
+    },
+  },
+  async mounted() {
+    const res = await this.$API.attr.getCategory1Data();
+    if (res.ok) {
+      this.$message.success("一级目录数据获取成功");
+      this.category1DataList = res.data;
+    } else {
+      this.$message.success("一级目录数据获取失败");
+    }
   },
 };
 </script>
