@@ -56,7 +56,10 @@
     </el-pagination>
 
     <!-- 提交Dialog -->
-    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="`${trademarkForm.id ? '修改' : '添加'}品牌`"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form
         :model="trademarkForm"
         label-width="100px"
