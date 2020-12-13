@@ -72,7 +72,21 @@
           </el-table-column>
           <el-table-column label="属性值名称">
             <template v-slot="{ row }">
-              <span>{{ row.valueName }}</span>
+              <el-input
+                placeholder="类型"
+                v-model="row.valueName"
+                size="mini"
+                v-if="row.edit"
+                @blur="row.edit = false"
+                ref="attrInput"
+                autofocus
+              ></el-input>
+              <span
+                v-else
+                @click="edit(row)"
+                style="width: 100%; display: block"
+                >{{ row.valueName }}</span
+              >
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作">
@@ -82,7 +96,7 @@
           </el-table-column>
         </el-table>
         <!-- 提交修改 -->
-        <el-button type="primary">
+        <el-button type="primary" @click="submitAttr">
           <span>保存</span>
         </el-button>
         <el-button>取消</el-button>
@@ -104,6 +118,7 @@ export default {
   },
   methods: {
     async getAttrsData(category) {
+      this.category = category;
       const res = await this.$API.attr.getCategoryAttrsData(category);
       if (res.ok) {
         this.$message.success("所有属性数据获取成功");
@@ -114,22 +129,39 @@ export default {
     },
     // 获取要修改的数据
     editAttr(row) {
-      this.attrEditList = row;
+      this.attrEditList = JSON.parse(JSON.stringify(row));
+    },
+    // edit
+    edit(row) {
+      this.$set(row, "edit", true);
+      this.$nextTick(() => {
+        this.$refs.attrInput.focus();
+      });
+    },
+    // 提交
+    async submitAttr() {
+      const res = await this.$API.attr.getUpdataAttr(this.attrEditList);
+      if (res.ok) {
+        this.$message.success("所有属性数据获取成功");
+        this.getAttrsData(this.category);
+      } else {
+        this.$message.success("所有属性数据获取失败");
+      }
     },
   },
-  async mounted() {
-    const res = await this.$API.attr.getCategoryAttrsData({
-      category1Id: "16",
-      category2Id: "104",
-      category3Id: "994",
-    });
-    if (res.ok) {
-      this.$message.success("所有属性数据获取成功");
-      this.attrsData = res.data;
-    } else {
-      this.$message.success("所有属性数据获取失败");
-    }
-  },
+  // async mounted() {
+  //   const res = await this.$API.attr.getCategoryAttrsData({
+  //     category1Id: "16",
+  //     category2Id: "104",
+  //     category3Id: "994",
+  //   });
+  //   if (res.ok) {
+  //     this.$message.success("所有属性数据获取成功");
+  //     this.attrsData = res.data;
+  //   } else {
+  //     this.$message.success("所有属性数据获取失败");
+  //   }
+  // },
   components: {
     Category,
   },
