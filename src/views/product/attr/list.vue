@@ -71,16 +71,16 @@
           >
           </el-table-column>
           <el-table-column label="属性值名称">
-            <template v-slot="{ row }">
+            <template v-slot="{ row, $index }">
               <el-input
                 placeholder="类型"
                 v-model="row.valueName"
                 size="mini"
                 v-if="row.edit"
-                @blur="row.edit = false"
+                @blur="editWatch(row, $index)"
                 ref="attrInput"
                 autofocus
-                @keyup.enter.native="row.edit = false"
+                @keyup.enter.native="editWatch(row, $index)"
               ></el-input>
               <span
                 v-else
@@ -158,6 +158,13 @@ export default {
       this.$nextTick(() => {
         this.$refs.attrInput.focus();
       });
+    },
+    // 添加属性如果没有就删除
+    editWatch(row, index) {
+      if (!row.valueName) {
+        this.attrEditList.attrValueList.splice(index, 1);
+      }
+      row.edit = false;
     },
   },
   // async mounted() {
