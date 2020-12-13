@@ -1,6 +1,10 @@
 <template>
   <div>
-    <Category @getAttr="getAttrsData" :disabled="!isShow"></Category>
+    <Category
+      @getAttr="getAttrsData"
+      :disabled="!isShow"
+      @cls="clsAttr"
+    ></Category>
     <!-- 属性 -->
     <el-card v-show="isShow" class="box-card" style="margin: 20px 0">
       <el-button type="primary">
@@ -179,6 +183,10 @@ export default {
     // 删除
     delAttr(row, index) {
       this.attrEditList.attrValueList.splice(index, 1);
+    },
+    // 清空属性列表
+    clsAttr() {
+      this.attrsData = [];
     },
   },
 

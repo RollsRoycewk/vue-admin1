@@ -74,6 +74,7 @@ export default {
       this.category.category3Id = "";
       this.category2DataList = [];
       this.category3DataList = [];
+      this.$emit("cls");
       const res = await this.$API.attr.getCategory2Data(e);
       if (res.ok) {
         this.$message.success("二级目录数据获取成功");
@@ -85,6 +86,7 @@ export default {
     async category2Click(e) {
       this.category.category3Id = "";
       this.category3DataList = [];
+      this.$emit("cls");
       const res = await this.$API.attr.getCategory3Data(e);
       if (res.ok) {
         this.$message.success("三级目录数据获取成功");
