@@ -52,7 +52,7 @@
           ></el-input>
         </el-form-item>
         <!-- 添加按钮 -->
-        <el-button type="primary">
+        <el-button type="primary" @click="addAttr">
           <i class="el-icon-plus"></i>
           <span>添加属性值</span>
         </el-button>
@@ -114,7 +114,10 @@ export default {
   data() {
     return {
       attrsData: [],
-      attrEditList: [],
+      attrEditList: {
+        attrName: "",
+        attrValueList: [],
+      },
     };
   },
   methods: {
@@ -148,6 +151,13 @@ export default {
       } else {
         this.$message.success("所有属性数据获取失败");
       }
+    },
+    // 增加
+    addAttr() {
+      this.attrEditList.attrValueList.push({ edit: true });
+      this.$nextTick(() => {
+        this.$refs.attrInput.focus();
+      });
     },
   },
   // async mounted() {
