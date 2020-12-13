@@ -7,6 +7,7 @@
           v-model="category.category1Id"
           placeholder="请选择"
           @change="category1Click"
+          :disabled="disabled"
         >
           <el-option
             :label="c1.name"
@@ -21,6 +22,7 @@
           v-model="category.category2Id"
           placeholder="请选择"
           @change="category2Click"
+          :disabled="disabled"
         >
           <el-option
             :label="c2.name"
@@ -36,6 +38,7 @@
           v-model="category.category3Id"
           placeholder="请选择"
           @change="category3Click"
+          :disabled="disabled"
         >
           <el-option
             :label="c3.name"
@@ -52,6 +55,7 @@
 <script>
 export default {
   name: "Category",
+  props: ["disabled"],
   data() {
     return {
       category: {

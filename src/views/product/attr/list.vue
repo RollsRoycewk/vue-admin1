@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Category @getAttr="getAttrsData"></Category>
+    <Category @getAttr="getAttrsData" :disabled="!isShow"></Category>
     <!-- 属性 -->
-    <el-card class="box-card" style="margin: 20px 0">
+    <el-card v-show="isShow" class="box-card" style="margin: 20px 0">
       <el-button type="primary">
         <i class="el-icon-plus"></i>
         <span>添加属性</span>
@@ -42,7 +42,7 @@
     </el-card>
 
     <!-- 修改属性 -->
-    <el-card class="box-card">
+    <el-card v-show="!isShow" class="box-card">
       <!-- 属性名 -->
       <el-form :inline="true" class="demo-form-inline" :data="attrEditList">
         <el-form-item label="属性名">
@@ -107,7 +107,7 @@
         <el-button type="primary" @click="submitAttr">
           <span>保存</span>
         </el-button>
-        <el-button>取消</el-button>
+        <el-button @click="isShow = true">取消</el-button>
       </el-form>
     </el-card>
   </div>
@@ -122,9 +122,10 @@ export default {
     return {
       attrsData: [],
       attrEditList: {
-        attrName: "",
-        attrValueList: [],
+        // attrName: "",
+        // attrValueList: [],
       },
+      isShow: "true",
     };
   },
   methods: {
@@ -141,6 +142,7 @@ export default {
     // 获取要修改的数据
     editAttr(row) {
       this.attrEditList = JSON.parse(JSON.stringify(row));
+      this.isShow = false;
     },
     // edit
     edit(row) {
@@ -158,6 +160,7 @@ export default {
       } else {
         this.$message.success("所有属性数据获取失败");
       }
+      this.isShow = true;
     },
     // 增加
     addAttr() {
