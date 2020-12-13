@@ -80,6 +80,7 @@
                 @blur="row.edit = false"
                 ref="attrInput"
                 autofocus
+                @keyup.enter.native="row.edit = false"
               ></el-input>
               <span
                 v-else
