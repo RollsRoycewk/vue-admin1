@@ -3,7 +3,7 @@
     <Category @getAttr="getAttrsData"></Category>
     <!-- 属性 -->
     <el-card class="box-card" style="margin: 20px 0">
-      <el-button type="primary" disabled>
+      <el-button type="primary">
         <i class="el-icon-plus"></i>
         <span>添加属性</span>
       </el-button>
@@ -29,14 +29,64 @@
           </template>
         </el-table-column>
         <el-table-column prop="address" label="操作" width="150">
-          <el-button type="primary" size="mini">
-            <i class="el-icon-edit"></i>
-          </el-button>
-          <el-button type="danger" size="mini">
-            <i class="el-icon-delete"></i>
-          </el-button>
+          <template v-slot="{ row }">
+            <el-button type="primary" size="mini" @click="editAttr(row)">
+              <i class="el-icon-edit"></i>
+            </el-button>
+            <el-button type="danger" size="mini">
+              <i class="el-icon-delete"></i>
+            </el-button>
+          </template>
         </el-table-column>
       </el-table>
+    </el-card>
+
+    <!-- 修改属性 -->
+    <el-card class="box-card">
+      <!-- 属性名 -->
+      <el-form :inline="true" class="demo-form-inline" :data="attrEditList">
+        <el-form-item label="属性名">
+          <el-input
+            placeholder="类型"
+            v-model="attrEditList.attrName"
+          ></el-input>
+        </el-form-item>
+        <!-- 添加按钮 -->
+        <el-button type="primary">
+          <i class="el-icon-plus"></i>
+          <span>添加属性值</span>
+        </el-button>
+        <!-- 属性值列表 -->
+        <el-table
+          border
+          style="width: 100%; margin: 20px 0"
+          :data="attrEditList.attrValueList"
+        >
+          <el-table-column
+            prop="date"
+            label="序号"
+            width="80"
+            type="index"
+            align="center"
+          >
+          </el-table-column>
+          <el-table-column label="属性值名称">
+            <template v-slot="{ row }">
+              <span>{{ row.valueName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="address" label="操作">
+            <el-button type="danger" size="mini">
+              <i class="el-icon-delete"></i>
+            </el-button>
+          </el-table-column>
+        </el-table>
+        <!-- 提交修改 -->
+        <el-button type="primary">
+          <span>保存</span>
+        </el-button>
+        <el-button>取消</el-button>
+      </el-form>
     </el-card>
   </div>
 </template>
@@ -49,6 +99,7 @@ export default {
   data() {
     return {
       attrsData: [],
+      attrEditList: [],
     };
   },
   methods: {
@@ -61,6 +112,23 @@ export default {
         this.$message.success("所有属性数据获取失败");
       }
     },
+    // 获取要修改的数据
+    editAttr(row) {
+      this.attrEditList = row;
+    },
+  },
+  async mounted() {
+    const res = await this.$API.attr.getCategoryAttrsData({
+      category1Id: "16",
+      category2Id: "104",
+      category3Id: "994",
+    });
+    if (res.ok) {
+      this.$message.success("所有属性数据获取成功");
+      this.attrsData = res.data;
+    } else {
+      this.$message.success("所有属性数据获取失败");
+    }
   },
   components: {
     Category,
