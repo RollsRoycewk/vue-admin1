@@ -91,9 +91,16 @@
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作">
-            <el-button type="danger" size="mini">
-              <i class="el-icon-delete"></i>
-            </el-button>
+            <template v-slot="{ row, $index }">
+              <el-popconfirm
+                :title="`确定删除${row.valueName}吗？`"
+                @onConfirm="delAttr(row, $index)"
+              >
+                <el-button type="danger" size="mini" slot="reference">
+                  <i class="el-icon-delete"></i>
+                </el-button>
+              </el-popconfirm>
+            </template>
           </el-table-column>
         </el-table>
         <!-- 提交修改 -->
@@ -166,20 +173,12 @@ export default {
       }
       row.edit = false;
     },
+    // 删除
+    delAttr(row, index) {
+      this.attrEditList.attrValueList.splice(index, 1);
+    },
   },
-  // async mounted() {
-  //   const res = await this.$API.attr.getCategoryAttrsData({
-  //     category1Id: "16",
-  //     category2Id: "104",
-  //     category3Id: "994",
-  //   });
-  //   if (res.ok) {
-  //     this.$message.success("所有属性数据获取成功");
-  //     this.attrsData = res.data;
-  //   } else {
-  //     this.$message.success("所有属性数据获取失败");
-  //   }
-  // },
+
   components: {
     Category,
   },
