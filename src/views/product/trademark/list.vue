@@ -28,12 +28,13 @@
       </el-table-column>
       <el-table-column prop="address" label="操作">
         <!-- 修改按钮 -->
-        <el-button type="warning" size="mini">
-          <i class="el-icon-edit"></i>
-          <span>修改</span>
-        </el-button>
-        <!-- 删除按钮 -->
         <template v-slot="{ row }">
+          <el-button type="warning" size="mini" @click="upBrandData(row)">
+            <i class="el-icon-edit"></i>
+            <span>修改</span>
+          </el-button>
+          <!-- 删除按钮 -->
+
           <el-button type="danger" size="mini" @click="delBrand(row)">
             <i class="el-icon-delete"></i>
             <span>删除</span>
@@ -174,8 +175,34 @@ export default {
     submitInfo() {
       this.$refs["ruleForm"].validate(async (valid) => {
         if (valid) {
-          const res = await this.$API.trademark.addPageList(this.trademarkForm);
-          if (res.code === 200) {
+          const { trademarkForm } = this;
+
+          // 判断是不是更新
+          const isUpdata = trademarkForm.id;
+
+          if (isUpdata) {
+            const tm = this.trademarkTableData.find(
+              (item) => item.id === trademarkForm.id
+            );
+            if (
+              tm.tmName === trademarkForm.tmName &&
+              tm.logoUrl === trademarkForm.logoUrl
+            ) {
+              this.$message.warning("数据没有发生变化");
+              return;
+            }
+          }
+
+          let result;
+          if (isUpdata) {
+            result = await this.$API.trademark.updataPageList(
+              this.trademarkForm
+            );
+          } else {
+            result = await this.$API.trademark.addPageList(this.trademarkForm);
+          }
+
+          if (result.code === 200) {
             this.$message.success("品牌上传成功");
             this.dialogFormVisible = false;
             // 添加完成重新请求页面,让数据加载出来
@@ -200,7 +227,6 @@ export default {
       )
         .then(async () => {
           const res = await this.$API.trademark.delPageList(row.id);
-          console.log(res);
           if (res.ok) {
             this.$message.success("数据删除成功");
             // 重新请求页面
@@ -215,6 +241,12 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    /* 修改品牌数据 */
+    upBrandData(row) {
+      this.dialogFormVisible = true;
+      // 点击修改的时候让之前的数据显示出来
+      this.trademarkForm = { ...row };
     },
   },
 };

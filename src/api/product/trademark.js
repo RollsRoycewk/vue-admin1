@@ -26,10 +26,11 @@ export default {
     });
   },
   /* 更新商品 */
-  updataPageList() {
+  updataPageList(data) {
     return request({
       url: `${api_name}/update`,
-      method: "PUT"
+      method: "PUT",
+      data
     });
   }
 };
