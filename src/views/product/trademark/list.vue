@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 添加按钮 -->
-    <el-button type="primary" @click="dialogFormVisible = true">
+    <el-button type="primary" @click="add">
       <i class="el-icon-plus"></i>
       添加
     </el-button>
@@ -244,9 +244,19 @@ export default {
     },
     /* 修改品牌数据 */
     upBrandData(row) {
+      this.$refs.ruleForm && this.$refs.ruleForm.clearValidate();
       this.dialogFormVisible = true;
       // 点击修改的时候让之前的数据显示出来
       this.trademarkForm = { ...row };
+    },
+    /* 添加按钮 */
+    add() {
+      this.$refs.ruleForm && this.$refs.ruleForm.clearValidate();
+      this.dialogFormVisible = true;
+      this.trademarkForm = {
+        tmName: "",
+        logoUrl: "",
+      };
     },
   },
 };
