@@ -33,10 +33,12 @@
           <span>修改</span>
         </el-button>
         <!-- 删除按钮 -->
-        <el-button type="danger" size="mini">
-          <i class="el-icon-delete"></i>
-          <span>删除</span>
-        </el-button>
+        <template v-slot="{ row }">
+          <el-button type="danger" size="mini" @click="delBrand(row)">
+            <i class="el-icon-delete"></i>
+            <span>删除</span>
+          </el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 分页器 -->
@@ -184,6 +186,35 @@ export default {
           return false;
         }
       });
+    },
+    /* 删除品牌 */
+    delBrand(row) {
+      this.$confirm(
+        `此操作将永久删除>>>${row.tmName}<<<品牌, 是否继续?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(async () => {
+          const res = await this.$API.trademark.delPageList(row.id);
+          console.log(res);
+          if (res.ok) {
+            this.$message.success("数据删除成功");
+            // 重新请求页面
+            this.getPageList(this.showList.current, this.showList.size);
+          } else {
+            this.$message.error("数据删除失败");
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
 };
