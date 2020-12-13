@@ -51,9 +51,15 @@
       :total="showList.total"
     >
     </el-pagination>
+
     <!-- 提交Dialog -->
     <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
-      <el-form :model="trademarkForm" label-width="100px" :rules="rules">
+      <el-form
+        :model="trademarkForm"
+        label-width="100px"
+        :rules="rules"
+        ref="ruleForm"
+      >
         <!-- 品牌名称 -->
         <el-form-item label="品牌名称" prop="tmName">
           <el-input
@@ -62,10 +68,10 @@
           ></el-input>
         </el-form-item>
         <!-- 品牌LOGO -->
-        <el-form-item label="品牌LOGO">
+        <el-form-item label="品牌LOGO" prop="logoUrl">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="`${$BASE_API}/admin/product/fileUpload`"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -77,13 +83,12 @@
             />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
+          <span>只能上传jpg/png文件，且不超过50kb</span>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button>取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitInfo">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -111,6 +116,7 @@ export default {
       /* 效验 */
       rules: {
         tmName: [{ required: true, message: "客官,留下姓名", trigger: "blur" }],
+        logoUrl: [{ required: true, message: "客官,留下艳照" }],
       },
     };
   },
@@ -146,20 +152,38 @@ export default {
     },
     /* 上传图片 */
     handleAvatarSuccess(res) {
-      console.log(res);
-      // this.imageUrl = URL.createObjectURL(file.raw);
+      this.trademarkForm.logoUrl = res.data;
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const imageType = ["image/jpeg", "image/png"];
+      // 是否包含这些
+      const isJPG = imageType.indexOf(file.type) > -1;
+      const isLt2M = file.size / 1024 < 1000;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.error("上传品牌LOGO只能是JPG/JPEG/PNG格式!");
       }
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error("上传品牌LOGO大小不能超过50kb");
       }
       return isJPG && isLt2M;
+    },
+    /* 提交上传信息 */
+    submitInfo() {
+      this.$refs["ruleForm"].validate(async (valid) => {
+        if (valid) {
+          const res = await this.$API.trademark.addPageList(this.trademarkForm);
+          if (res.code === 200) {
+            this.$message.success("品牌上传成功");
+            this.dialogFormVisible = false;
+            // 添加完成重新请求页面,让数据加载出来
+            this.getPageList(this.showList.current, this.showList.size);
+          }
+        } else {
+          this.$message.error("请填写完整品牌信息");
+          return false;
+        }
+      });
     },
   },
 };
