@@ -77,14 +77,18 @@ export default {
     async category2Click(e) {
       const res = await this.$API.attr.getCategory3Data(e);
       if (res.ok) {
-        this.$message.success("二级目录数据获取成功");
+        this.$message.success("三级目录数据获取成功");
         this.category3DataList = res.data;
       } else {
-        this.$message.success("二级目录数据获取失败");
+        this.$message.success("三级目录数据获取失败");
       }
     },
-    async category3Click(e) {
-      console.log(e);
+    async category3Click(category3Id) {
+      const category = {
+        ...this.category,
+        category3Id,
+      };
+      this.$emit("getAttr", category);
     },
   },
   async mounted() {
